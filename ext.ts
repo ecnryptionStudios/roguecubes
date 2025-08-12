@@ -876,10 +876,13 @@ namespace rogueCubes{
         addCubelingInternal(name, costume, maxHealth, attack, defense, speed, rarity)
         rarityMap.push([minLvlAppearance, maxLvlAppearance])
     }
+    export function debug(index: number){
+        game.splash(cubelingPool[index].name)
+    }
     //%block
     export function importBundle(data: string){
         function convertBase(value: string, from_base: number, to_base: number): string {
-            const range = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
+            const range = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%& () * +, -./: ;<=>?@[]^ _`{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷ';
             const from_range = range.substr(0, from_base);
             const to_range = range.substr(0, to_base);
 
@@ -921,7 +924,7 @@ namespace rogueCubes{
 
             return result.length > 0 ? result : "0";
         }
-        let edata = convertBase(data, 62, 10)
+        let edata = convertBase(data, 370, 10)
         let splitBy3: string[] = []
         let id = ""
         edata.split('').forEach(v=>{
@@ -944,7 +947,7 @@ namespace rogueCubes{
         })
         attrs.forEach(v=>{
             let fin = image.create(16, 16)
-            let imag = convertBase(v[1], 62, 17)
+            let imag = convertBase(v[1], 370, 17)
             imag.split('g').forEach((v,i1)=>{
                 v.split('').forEach((d,i2)=>{
                     let newd = d.replace("a", "10").replace("b", "11").replace("c", "12").replace("d", "13").replace("e", "14").replace("f", "-1")
