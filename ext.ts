@@ -58,23 +58,23 @@ namespace rogueCubes{
 
     let costumes: { [key: string]: Image } = {
         Fire: img`
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . 2 2 2 2 2 2 f f f . . .
-    . . . . 2 2 2 2 2 2 f f f . . .
-    . . . . 2 2 2 2 2 2 f f f . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . 2 2 2 2 2 2 2 2 2 . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . . . . .
-`,
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . 2 2 2 2 2 2 f f f . . .
+            . . . . 2 2 2 2 2 2 f f f . . .
+            . . . . 2 2 2 2 2 2 f f f . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . 2 2 2 2 2 2 2 2 2 . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `,
         Water: img`
     . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . .
@@ -876,4 +876,100 @@ namespace rogueCubes{
         addCubelingInternal(name, costume, maxHealth, attack, defense, speed, rarity)
         rarityMap.push([minLvlAppearance, maxLvlAppearance])
     }
+    //%block
+    export function importBundle(data: string){
+        function convertBase(value: string, from_base: number, to_base: number): string {
+            const range = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
+            const from_range = range.substr(0, from_base);
+            const to_range = range.substr(0, to_base);
+
+            // Convert input string to an array of digit values (base from_base)
+            let digits: number[] = [];
+            for (let i = 0; i < value.length; i++) {
+                const ch = value.charAt(i);
+                const val = from_range.indexOf(ch);
+                if (val < 0) {
+                    game.splash("Invalid digit: " + ch);
+                    return "";
+                }
+                digits.push(val);
+            }
+
+            // Conversion algorithm (repeated division method)
+            let output: number[] = [];
+            while (digits.length > 0) {
+                let remainder = 0;
+                let newDigits: number[] = [];
+
+                for (let i = 0; i < digits.length; i++) {
+                    let acc = digits[i] + remainder * from_base;
+                    let digit = Math.idiv(acc, to_base);
+                    remainder = acc % to_base;
+                    if (newDigits.length > 0 || digit != 0) {
+                        newDigits.push(digit);
+                    }
+                }
+                output.unshift(remainder);
+                digits = newDigits;
+            }
+
+            // Map output digit values to characters
+            let result = "";
+            for (let i = 0; i < output.length; i++) {
+                result += to_range.charAt(output[i]);
+            }
+
+            return result.length > 0 ? result : "0";
+        }
+        let edata = convertBase(data, 62, 10)
+        let splitBy3: string[] = []
+        let id = ""
+        edata.split('').forEach(v=>{
+            id+=v
+            if(id.length == 3){
+                splitBy3.push(id)
+                id=""
+            }
+        })
+        let final = ""
+        splitBy3.forEach(v=>final+=String.fromCharCode(parseInt(v)))
+        let lines = final.split("/")
+        let attrs: string[][] = []
+        lines.forEach(v=>{
+            let r: string[] = []
+            v.split("|").forEach(d=>{
+                r.push(d)
+            })
+            attrs.push(r)
+        })
+        attrs.forEach(v=>{
+            let fin = image.create(16, 16)
+            let imag = convertBase(v[1], 62, 17)
+            imag.split('g').forEach((v,i1)=>{
+                v.split('').forEach((d,i2)=>{
+                    let newd = d.replace("a", "10").replace("b", "11").replace("c", "12").replace("d", "13").replace("e", "14").replace("f", "-1")
+                    fin.setPixel(i2, i1, parseInt(newd)+1)
+                })
+            })
+            addCubeling(v[0], fin, v[2], parseInt(v[3]), parseInt(v[4]), parseInt(v[5]), parseInt(v[6]), parseInt(v[7]), parseInt(v[8]), parseInt(v[9]))
+        })
+    }
 }
+img`
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . .
+`
